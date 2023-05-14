@@ -7,37 +7,35 @@ recognition.maxAlternatives = 1;
 
 let on = false;
 
-recognition.onstart = () => {
+const toggleRecognition = () => {
   const startBtn = document.querySelector('.start-btn');
+  on ? recognition.abort() : recognition.start();
   startBtn.innerHTML = on ? 'Start' : 'Stop';
-  on = true;
-}
-
-let lastMsg = '';
-
-recognition.onresult = (e) => {
-  const text = e.results[0][0].transcript;
-  const textContainer = document.querySelector('.speech');
-  const previousMsgs = textContainer.querySelectorAll('.bubble');
-  const lastAdded = previousMsgs[previousMsgs.length - 1];
-  lastMsg = lastAdded.innerHTML;
-  const sameMsgStart = (lastMsg.split(' ')[0] === text.split(' ')[0] || lastMsg.split(' ')[1] === text.split(' ')[1] || lastMsg.split(' ')[2] === text.split(' ')[2]);
-  const sameStartLetter = lastMsg.split('').slice(0,2) === text.split('').slice(0,2);
-
-  if (sameMsgStart || sameStartLetter) {
-    lastAdded.innerHTML = text;
-  } else {
-    const msg = `<p class="bubble">${text}</p>`;
-    textContainer.insertAdjacentHTML('beforeend', msg);
-  }
-
+  on = !on;
 }
 
 recognition.onerror = (e) => {
   console.log(e)
 }
 
-// recognition.onend = () => {
-//   console.log('restart voice recognition');
-//   if (on) recognition.start();
-// };
+
+let lastMsg = '';
+
+recognition.onresult = (event) => {
+  const textContainer = document.querySelector('.speech');
+  const previousMsgs = document.querySelectorAll('.bubble');
+  const utteranceList = event.results;
+  const latestUtterance = utteranceList[utteranceList.length-1];
+  const speechRecognition = latestUtterance[latestUtterance.length-1];
+
+  // Update text object with speech recognition transcription
+  const transcript  = speechRecognition.transcript.toLowerCase();
+
+  const lastMsg = previousMsgs[previousMsgs.length - 1];
+  lastMsg.innerText = transcript;
+
+  if (latestUtterance.isFinal) {
+    const newMsg = `<p class="bubble"></p>`;
+    textContainer.insertAdjacentHTML('beforeend', newMsg);
+  }
+}
