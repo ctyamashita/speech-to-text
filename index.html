@@ -6,11 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Voice to Text</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
 </head>
 <body>
-  <button class="start-btn" onclick="toggleRecognition()">Start</button>
-  <div class="speech">
-    <p class="bubble"></p>
+  <div class="container">
+    <div class="start-btn" onclick="toggleRecognition()">
+      Start
+    </div>
+    <div class="msg-container">
+      <div class="old-speech"></div>
+      <div class="current-speech"></div>
+    </div>
   </div>
   <script src="voice.js"></script>
 </body>
