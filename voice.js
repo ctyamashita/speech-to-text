@@ -14,9 +14,11 @@ let on = false;
 
 const toggleRecognition = () => {
   const startBtn = document.querySelector('.start-btn');
+  const header = document.querySelector('.header');
   on ? recognition.abort() : recognition.start();
   startBtn.innerHTML = on ? '<i class="fa-solid fa-circle-play"></i>' : '<i class="fa-solid fa-circle-pause"></i>';
-  startBtn.style.background = on ? 'linear-gradient(teal,cadetblue)' : 'linear-gradient(indianred,salmon)';
+  startBtn.style.background = on ? 'teal' : 'indianred';
+  header.style.background = on ? 'teal' : 'indianred';
   on = !on;
 }
 
