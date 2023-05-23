@@ -7,8 +7,8 @@ recognition.lang = 'en-US';
 recognition.interimResults = true;
 recognition.maxAlternatives = 1;
 
-const textContainer = document.querySelector('.old-speech');
-const msgContainer = document.querySelector('.current-speech');
+const savedMessagesContainer = document.querySelector('.saved-speech');
+const currentMsgContainer = document.querySelector('.current-speech');
 
 let on = false;
 
@@ -23,8 +23,8 @@ const toggleRecognition = () => {
 }
 
 const scrollToLastMsg = () => {
-  const lastCurrentMsg = msgContainer.children[msgContainer.childElementCount - 1];
-  const lastStoredMsg = textContainer.children[msgContainer.childElementCount - 1];
+  const lastCurrentMsg = currentMsgContainer.children[currentMsgContainer.childElementCount - 1];
+  const lastStoredMsg = savedMessagesContainer.children[currentMsgContainer.childElementCount - 1];
   lastCurrentMsg ? lastCurrentMsg.scrollIntoView() : (lastStoredMsg ? lastStoredMsg.scrollIntoView() : console.log('No last message'))
 }
 
@@ -37,14 +37,14 @@ recognition.onresult = (event) => {
   const utterances = Object.values(utteranceList);
 
   const finalUtt = []
-  const utt = []
+  const currentUtt = []
 
   utterances.forEach((utterance) => {
     const utteranceContent = utterance[0].transcript.trim();
-    utterance.isFinal ? finalUtt.push(utteranceContent) : utt.push(utteranceContent);
+    utterance.isFinal ? finalUtt.push(utteranceContent) : currentUtt.push(utteranceContent);
   })
-  if (finalUtt.length > 0) textContainer.insertAdjacentHTML('beforeend', storeMsgs(finalUtt.join(' ')));
-  msgContainer.innerHTML = utt.length > 0 ? convertMsgs(utt.join(' ')) : '';
+  if (finalUtt.length > 0) savedMessagesContainer.insertAdjacentHTML('beforeend', storeMsgs(finalUtt.join(' ')));
+  currentMsgContainer.innerHTML = currentUtt.length > 0 ? convertMsgs(currentUtt.join(' ')) : '';
   scrollToLastMsg();
 }
 
