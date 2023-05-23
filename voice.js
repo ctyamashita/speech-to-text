@@ -1,62 +1,63 @@
+// Speech Recognition
+
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
-recognition.continuous = true;
+// recognition.continuous = true;
 recognition.lang = 'en-US';
 recognition.interimResults = true;
 recognition.maxAlternatives = 1;
+
+const textContainer = document.querySelector('.old-speech');
+const msgContainer = document.querySelector('.current-speech');
 
 let on = false;
 
 const toggleRecognition = () => {
   const startBtn = document.querySelector('.start-btn');
   on ? recognition.abort() : recognition.start();
-  startBtn.innerHTML = on ? 'Start' : 'Stop';
-  startBtn.style.background = on ? 'teal' : 'indianred';
+  startBtn.innerHTML = on ? '<i class="fa-solid fa-circle-play"></i>' : '<i class="fa-solid fa-circle-pause"></i>';
+  startBtn.style.background = on ? 'linear-gradient(teal,cadetblue)' : 'linear-gradient(indianred,salmon)';
   on = !on;
 }
 
-recognition.onerror = (e) => {
-  console.log(e)
+const scrollToLastMsg = () => {
+  const lastCurrentMsg = msgContainer.children[msgContainer.childElementCount - 1];
+  const lastStoredMsg = textContainer.children[msgContainer.childElementCount - 1];
+  lastCurrentMsg ? lastCurrentMsg.scrollIntoView() : (lastStoredMsg ? lastStoredMsg.scrollIntoView() : console.log('No last message'))
 }
 
-const convertMsgs = (array) => {
-  const newArray = array.map(utt => `<p class="previous-msg">${utt.charAt(0).toUpperCase() + utt.slice(1)}</p>`);
-  if (array.length >= 2 && newArray[newArray.length - 1].length < 100) {
-    newArray[newArray.length - 2] = newArray[newArray.length - 2].replace('</p>', ' ');
-    newArray[newArray.length - 1] = newArray[newArray.length - 1].toLowerCase().replace('<p class="previous-msg">', '');
-  }
-  return newArray.join('');
-};
+const storeMsgs = (string) => `<p onclick="readMsg(this)">${(string[0].toUpperCase() + string.slice(1)).replaceAll(' question mark', '?').replaceAll(' exclamation point', '!').replaceAll(' period', '.')}${string.slice(-1) !== '.' ? '.' : ''}</p>`;
 
-const storeMsgs = (array) => array.map(utt => `<p>${utt}</p>`).join('');
-
-let previousMsgsContent = [];
+const convertMsgs = (string) => `<p>${string}</p>`;
 
 recognition.onresult = (event) => {
-  const textContainer = document.querySelector('.old-speech');
-  const msgContainer = document.querySelector('.current-speech');
-  const utteranceList = event.results;
+  const utteranceList = event.results; //object
+  const utterances = Object.values(utteranceList);
 
-  const utterances = Object.values(utteranceList).map(utt => utt[0].transcript);
+  const finalUtt = []
+  const utt = []
 
-  if (!previousMsgsContent[0] || utterances[0].split(' ')[0] == previousMsgsContent[0].split(' ')[0] || utterances[0].split(' ')[0].includes(previousMsgsContent[0].split(' ')[0])) {
-    console.log('refresh current msg');
-    msgContainer.innerHTML = convertMsgs(utterances);
-  } else if (utterances.length > 1) {
-    console.log('storing msg');
-    textContainer.insertAdjacentHTML('beforeend', storeMsgs(previousMsgsContent));
-  }
-  previousMsgsContent = utterances
-  msgContainer.children[msgContainer.childElementCount - 1].scrollIntoView();
+  utterances.forEach((utterance) => {
+    const utteranceContent = utterance[0].transcript.trim();
+    utterance.isFinal ? finalUtt.push(utteranceContent) : utt.push(utteranceContent);
+  })
+  if (finalUtt.length > 0) textContainer.insertAdjacentHTML('beforeend', storeMsgs(finalUtt.join(' ')));
+  msgContainer.innerHTML = utt.length > 0 ? convertMsgs(utt.join(' ')) : '';
+  scrollToLastMsg();
 }
 
-recognition.onend = () => {
-  if (on) recognition.start();
-}
+recognition.onend = () => on ? recognition.start() : recognition.abort();
 
-recognition.onaudioend = () => {
-  console.log('stop talking');
-}
-recognition.onspeechstart = () => {
-  console.log('begin talking')
+// recognition.onerror = (e) => console.log(e);
+
+// recognition.onaudioend = () => {
+//   console.log('stop talking');
+// }
+// recognition.onspeechstart = () => {
+//   console.log('begin talking')
+// }
+
+const readMsg = (el) => {
+  const utterance = new SpeechSynthesisUtterance(el.innerText);
+  speechSynthesis.speak(utterance);
 }
