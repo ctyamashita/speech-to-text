@@ -30,7 +30,9 @@ const scrollToLastMsg = () => {
 
 const storeMsgs = (string) => `<p onclick="readMsg(this)">${(string[0].toUpperCase() + string.slice(1)).replaceAll(' question mark', '?').replaceAll(' exclamation point', '!').replaceAll(' period', '.')}${string.slice(-1) !== '.' ? '.' : ''}</p>`;
 
-const convertMsgs = (string) => `<p>${string}</p>`;
+const convertMsg = (string) => `<p>${string}</p>`;
+
+const convertMsgs = (array) => array.map(string => `<p>${string}</p>`).join('');
 
 recognition.onresult = (event) => {
   const utteranceList = event.results; //object
@@ -44,7 +46,11 @@ recognition.onresult = (event) => {
     utterance.isFinal ? finalUtt.push(utteranceContent) : currentUtt.push(utteranceContent);
   })
   if (finalUtt.length > 0) savedMessagesContainer.insertAdjacentHTML('beforeend', storeMsgs(finalUtt.join(' ')));
-  currentMsgContainer.innerHTML = currentUtt.length > 0 ? convertMsgs(currentUtt.join(' ')) : '';
+  if (navigator.userAgent.match(/iPhone/i)) {
+    currentMsgContainer.innerHTML = currentUtt.length > 0 ? convertMsgs(currentUtt) : '';
+  } else {
+    currentMsgContainer.innerHTML = currentUtt.length > 0 ? convertMsg(currentUtt.join(' ')) : '';
+  }
   scrollToLastMsg();
 }
 
