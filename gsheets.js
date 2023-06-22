@@ -78,3 +78,7 @@ function handleSignInClick(event) {
 function handleSignOutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
 }
+
+globalThis.handleCredentialResponse = async (response) => {
+  console.log(response);
+}
