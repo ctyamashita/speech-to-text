@@ -30,9 +30,12 @@
   </div>
   <script src="voice.js"></script>
   <script src="gsheets.js"></script>
-  <script async defer src="https://apis.google.com/js/api.js"
-    onload="this.onload=function(){};handleClientLoad()"
-    onreadystatechange="if (this.readyState === 'complete') this.onload()">
-  </script>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <div id="g_id_onload"
+        data-client_id="YOUR_CLIENT_ID"
+        data-callback="handleCredentialResponse">
+  </div>
+  <div class="g_id_signin" data-type="standard"></div>
 </body>
 </html>
