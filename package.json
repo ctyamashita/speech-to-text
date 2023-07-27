@@ -1,0 +1,19 @@
+{
+  "name": "speech-to-text",
+  "version": "1.0.0",
+  "description": "",
+  "main": "voice.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ctyamashita/speech-to-text.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ctyamashita/speech-to-text/issues"
+  },
+  "homepage": "https://github.com/ctyamashita/speech-to-text#readme"
+}
